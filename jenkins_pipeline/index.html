@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Discover India — Travel & Tours</title>
+  <meta name="description" content="Explore India's iconic destinations, curated itineraries and travel tips.">
+  <style>
+    :root{
+      --bg:#0f1724; --card:#0b1220; --accent:#f59e0b; --muted:#9aa6b2; --glass: rgba(255,255,255,0.03);
+      --max-width:1100px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      color: #e6eef6;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; background:linear-gradient(180deg,#071022 0%, #072033 60%);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.5;
+      padding:24px;
+      display:flex; justify-content:center;
+      font-size:16px;
+    }
+    .wrap{width:100%; max-width:var(--max-width)}
+    header{display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:20px}
+    .brand{display:flex; align-items:center; gap:12px}
+    .logo{
+      width:56px; height:56px; border-radius:12px;
+      background:linear-gradient(135deg,#f97316,#fb923c);
+      display:flex; align-items:center; justify-content:center;
+      font-weight:700; color:#082032; font-size:20px;
+      box-shadow:0 6px 18px rgba(0,0,0,0.4);
+    }
+    h1{font-size:1.25rem; margin:0}
+    nav{display:flex; gap:10px; align-items:center}
+    a.btn{
+      padding:10px 14px; border-radius:8px; background:transparent; color:var(--accent);
+      border:1px solid rgba(255,255,255,0.06); text-decoration:none; font-weight:600;
+    }
+    .hero{
+      background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      padding:28px; border-radius:14px; box-shadow:0 8px 30px rgba(2,6,23,0.6);
+      display:grid; grid-template-columns: 1fr 360px; gap:18px; align-items:center;
+    }
+    .hero-left h2{font-size:2rem; margin:0 0 8px}
+    .lead{color:var(--muted); margin-bottom:16px}
+    .search{
+      display:flex; gap:8px; margin-top:12px;
+    }
+    .search input{
+      flex:1; padding:12px 14px; border-radius:10px; border:1px solid rgba(255,255,255,0.06);
+      background:transparent; color:inherit; outline:none;
+    }
+    .search button{padding:12px 14px; border-radius:10px; border:none; background:var(--accent); color:#072032; font-weight:700}
+    .hero-right{
+      background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));
+      padding:14px; border-radius:12px; text-align:center;
+    }
+    .pill{display:inline-block; background:var(--glass); padding:6px 10px; border-radius:999px; color:var(--muted); font-size:13px}
+    main{margin-top:18px; display:grid; grid-template-columns: 1fr 340px; gap:18px; align-items:start}
+    /* left column */
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); padding:16px; border-radius:12px}
+    .grid{display:grid; grid-template-columns: repeat(2,1fr); gap:12px}
+    .destination{display:block; border-radius:10px; overflow:hidden; background:linear-gradient(180deg, rgba(0,0,0,0.25), rgba(0,0,0,0.4)); min-height:140px; position:relative; color:inherit; text-decoration:none}
+    .destination .meta{position:absolute; left:12px; bottom:12px; z-index:2}
+    .destination img{width:100%; height:100%; object-fit:cover; opacity:0.95; filter:saturate(1.02) contrast(0.95)}
+    .destination .name{font-weight:700; font-size:1.05rem; margin-bottom:4px}
+    .tags{font-size:13px; color:var(--muted)}
+    .filters{display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap}
+    .chip{background:rgba(255,255,255,0.03); padding:6px 10px; border-radius:999px; font-weight:600; cursor:pointer; border:1px solid rgba(255,255,255,0.03)}
+    .chip.active{background:linear-gradient(90deg,#f97316,#fb923c); color:#072032}
+    .itinerary{margin-top:10px}
+    .itinerary li{margin-bottom:8px}
+    /* right column */
+    aside .small{font-size:14px; color:var(--muted)}
+    .gallery{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:12px}
+    .gallery img{width:100%; height:80px; object-fit:cover; border-radius:8px; cursor:pointer}
+    footer{margin-top:20px; text-align:center; color:var(--muted); font-size:14px}
+    /* lightbox */
+    .lightbox{
+      position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
+      background:rgba(0,0,0,0.7); z-index:9999; visibility:hidden; opacity:0; transition:opacity .18s ease, visibility .18s;
+    }
+    .lightbox.show{visibility:visible; opacity:1}
+    .lightbox img{max-width:90%; max-height:80%; border-radius:10px; box-shadow:0 10px 40px rgba(2,6,23,0.8)}
+    /* responsive */
+    @media (max-width:980px){
+      .hero{grid-template-columns:1fr}
+      main{grid-template-columns:1fr}
+      .grid{grid-template-columns:1fr}
+      .gallery{grid-template-columns:repeat(4,1fr)}
+    }
+    @media (max-width:560px){
+      .gallery{grid-template-columns:repeat(2,1fr)}
+      .hero-left h2{font-size:1.4rem}
+    }
+    /* subtle footer link */
+    .download {
+      display:inline-block; margin-left:8px; font-weight:700; color:var(--accent);
+      text-decoration:underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo">IN</div>
+        <div>
+          <h1>Discover India</h1>
+          <div class="pill">Travel · Culture · Nature</div>
+        </div>
+      </div>
+      <nav>
+        <a href="#destinations" class="btn">Destinations</a>
+        <a href="#itineraries" class="btn">Itineraries</a>
+        <a href="#contact" class="btn">Contact</a>
+        <!-- Download link pointing to your uploaded file path -->
+        <a class="btn" href="/mnt/data/report.pdf" target="_blank" rel="noopener">Download Report</a>
+      </nav>
+    </header>
+
+    <section class="hero card" aria-label="Hero">
+      <div class="hero-left">
+        <h2>Experience the colors, flavors and landscapes of India</h2>
+        <p class="lead">From the snow-capped Himalayas to sunlit beaches and bustling heritage cities — find curated trips, local tips and smart itineraries tailored for every traveler.</p>
+
+        <div class="search" role="search">
+          <input id="search" placeholder="Search destinations, e.g., Rajasthan, Goa, Ladakh..." aria-label="Search destinations">
+          <button id="searchBtn">Explore</button>
+        </div>
+
+        <div style="margin-top:12px" class="small">Filter by region:</div>
+        <div style="margin-top:8px" class="filters" id="filters">
+          <div class="chip active" data-region="all">All</div>
+          <div class="chip" data-region="north">North</div>
+          <div class="chip" data-region="south">South</div>
+          <div class="chip" data-region="east">East</div>
+          <div class="chip" data-region="west">West</div>
+          <div class="chip" data-region="hills">Hills</div>
+        </div>
+
+      </div>
+
+      <aside class="hero-right" aria-hidden="true">
+        <div style="font-weight:800; font-size:18px">Plan your perfect trip</div>
+        <p class="small" style="margin:8px 0">AI-suggested itineraries · Weather-aware suggestions · Local guides</p>
+        <div style="margin-top:12px">
+          <a href="#itineraries" class="btn" style="background:#0ea5a4; color:#071022">See Itineraries</a>
+        </div>
+        <div style="margin-top:16px; color:var(--muted); font-size:13px">Tip: Click any photo to open gallery</div>
+      </aside>
+    </section>
+
+    <main>
+      <div>
+        <section id="destinations" class="card" aria-labelledby="dest-title">
+          <h3 id="dest-title">Featured Destinations</h3>
+          <p class="small">Hand-picked regions with quick facts and travel highlights.</p>
+
+          <div class="grid" id="grid">
+            <!-- Destination cards will be injected by JS -->
+          </div>
+        </section>
+
+        <section id="itineraries" class="card itinerary" style="margin-top:14px">
+          <h3>Suggested Itineraries</h3>
+          <ul>
+            <li><strong>Golden Triangle (6 days)</strong> — Delhi → Agra → Jaipur. Culture, forts, Taj Mahal.</li>
+            <li><strong>Kerala Backwaters (5 days)</strong> — Kochi → Alleppey → Munnar. Houseboats, tea gardens, Ayurveda.</li>
+            <li><strong>Himalayan Escape (7-9 days)</strong> — Rishikesh → Haridwar → Rishikesh/Rafting or trekking in Uttarakhand.</li>
+            <li><strong>Goa Sun & Sea (4 days)</strong> — Beaches, water-sports, Portuguese heritage.</li>
+          </ul>
+        </section>
+      </div>
+
+      <aside>
+        <section class="card">
+          <h4>Quick Tips</h4>
+          <ol class="small">
+            <li>Best time: Oct–Mar for most regions.</li>
+            <li>Local SIM & digital payments are widely available.</li>
+            <li>Respect local customs and dress modestly at religious sites.</li>
+            <li>Book Taj Mahal tickets and permits in advance for peak season.</li>
+          </ol>
+        </section>
+
+        <section class="card" style="margin-top:12px">
+          <h4>Photo Gallery</h4>
+          <div class="gallery" id="gallery">
+            <!-- images injected by JS -->
+          </div>
+          <div style="margin-top:8px; font-size:13px; color:var(--muted)">Click an image to view larger</div>
+        </section>
+
+        <section class="card" style="margin-top:12px">
+          <h4>Download</h4>
+          <p class="small">Download a full travel guide / brochure (PDF)</p>
+          <a class="download" href="/mnt/data/report.pdf" target="_blank" rel="noopener">Download full report (PDF)</a>
+        </section>
+
+      </aside>
+    </main>
+
+    <footer>
+      <p>Built with ❤️ for curious travelers • © Discover India 2025</p>
+    </footer>
+
+    <!-- lightbox -->
+    <div id="lightbox" class="lightbox" role="dialog" aria-hidden="true">
+      <img id="lightboxImg" alt="Expanded photo">
+    </div>
+
+  </div>
+
+  <script>
+    // Data for destinations and gallery
+    const DESTINATIONS = [
+      {id:'taj', name:'Agra — Taj Mahal', region:'north', img:'https://images.unsplash.com/photo-1549880338-65ddcdfd017b?auto=format&fit=crop&w=1200&q=60', tags:'Heritage,Monument'},
+      {id:'jaipur', name:'Jaipur — Pink City', region:'west', img:'https://images.unsplash.com/photo-1505575970727-6c94b1a4b4d6?auto=format&fit=crop&w=1200&q=60', tags:'Palaces,Shopping'},
+      {id:'goa', name:'Goa — Beaches & Nightlife', region:'west', img:'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=60', tags:'Beaches,Relax'},
+      {id:'kerala', name:'Kerala — Backwaters', region:'south', img:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=1200&q=60', tags:'Nature,Houseboats'},
+      {id:'ladakh', name:'Ladakh — High-Altitude', region:'hills', img:'https://images.unsplash.com/photo-1526481280698-7e2c5f6b13a5?auto=format&fit=crop&w=1200&q=60', tags:'Trekking,Scenery'},
+      {id:'varanasi', name:'Varanasi — Spiritual Ghats', region:'east', img:'https://images.unsplash.com/photo-1513759565280-2023f09f3c6b?auto=format&fit=crop&w=1200&q=60', tags:'Spirituality,Rivers'},
+      {id:'darjeeling', name:'Darjeeling — Tea Hills', region:'hills', img:'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1200&q=60', tags:'Tea,Scenic'},
+      {id:'hampi', name:'Hampi — Ancient Ruins', region:'south', img:'https://images.unsplash.com/photo-1549887536-4e0cf6d783f3?auto=format&fit=crop&w=1200&q=60', tags:'History,Heritage'}
+    ];
+
+    const GALLERY = DESTINATIONS.map(d => d.img).slice(0,9);
+
+    // render destinations
+    const grid = document.getElementById('grid');
+    function renderDestinations(filterRegion='all', query='') {
+      grid.innerHTML = '';
+      const q = query.trim().toLowerCase();
+      const list = DESTINATIONS.filter(d => {
+        const regMatch = (filterRegion==='all') || (d.region===filterRegion);
+        const qMatch = q === '' || d.name.toLowerCase().includes(q) || d.tags.toLowerCase().includes(q);
+        return regMatch && qMatch;
+      });
+      if(list.length === 0) {
+        grid.innerHTML = '<div style="grid-column:1/-1; color:var(--muted)">No results — try a different filter or search.</div>';
+        return;
+      }
+      for(const d of list){
+        const el = document.createElement('a');
+        el.className = 'destination';
+        el.href = '#';
+        el.innerHTML = `
+          <div style="position:relative; width:100%; height:100%">
+            <img alt="${d.name}" loading="lazy" src="${d.img}">
+            <div class="meta">
+              <div class="name">${d.name}</div>
+              <div class="tags">${d.tags} · ${d.region.toUpperCase()}</div>
+            </div>
+          </div>
+        `;
+        el.addEventListener('click', e => {
+          e.preventDefault();
+          openLightbox(d.img, d.name);
+        });
+        grid.appendChild(el);
+      }
+    }
+
+    // render gallery
+    const gallery = document.getElementById('gallery');
+    function renderGallery(){
+      gallery.innerHTML = '';
+      for(const url of GALLERY){
+        const img = document.createElement('img');
+        img.src = url;
+        img.loading = 'lazy';
+        img.alt = 'Photo';
+        img.addEventListener('click', () => openLightbox(url));
+        gallery.appendChild(img);
+      }
+    }
+
+    // filters
+    document.getElementById('filters').addEventListener('click', e => {
+      const chip = e.target.closest('.chip');
+      if(!chip) return;
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      const region = chip.dataset.region || 'all';
+      const q = document.getElementById('search').value || '';
+      renderDestinations(region, q);
+    });
+
+    // search
+    document.getElementById('searchBtn').addEventListener('click', () => {
+      const q = document.getElementById('search').value || '';
+      const active = document.querySelector('.chip.active');
+      const region = active ? active.dataset.region : 'all';
+      renderDestinations(region, q);
+    });
+    document.getElementById('search').addEventListener('keydown', (e) => {
+      if(e.key === 'Enter') document.getElementById('searchBtn').click();
+    });
+
+    // Lightbox logic
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightboxImg');
+    function openLightbox(src, alt='Photo'){
+      lightboxImg.src = src;
+      lightboxImg.alt = alt;
+      lightbox.classList.add('show');
+      lightbox.setAttribute('aria-hidden','false');
+    }
+    lightbox.addEventListener('click', (e) => {
+      if(e.target === lightbox || e.target === lightboxImg) {
+        lightbox.classList.remove('show');
+        lightbox.setAttribute('aria-hidden','true');
+      }
+    });
+
+    // initial render
+    renderDestinations();
+    renderGallery();
+
+    // Accessibility: trap ESC to close lightbox
+    document.addEventListener('keydown', (e) => {
+      if(e.key === 'Escape' && lightbox.classList.contains('show')) {
+        lightbox.classList.remove('show');
+        lightbox.setAttribute('aria-hidden','true');
+      }
+    });
+
+    // Contact form (basic local validation and fake submit)
+    // Append a contact form at the bottom dynamically
+    (function addContact(){
+      const formCard = document.createElement('section');
+      formCard.className = 'card';
+      formCard.style.marginTop = '14px';
+      formCard.innerHTML = `
+        <h3 id="contact">Contact & Bookings</h3>
+        <p class="small">Reach our travel experts for custom itineraries and group bookings.</p>
+        <form id="contactForm" style="margin-top:10px; display:grid; gap:8px">
+          <input id="name" placeholder="Your full name" required style="padding:10px; border-radius:8px; background:transparent; border:1px solid rgba(255,255,255,0.04); color:inherit">
+          <input id="email" placeholder="Email" type="email" required style="padding:10px; border-radius:8px; background:transparent; border:1px solid rgba(255,255,255,0.04); color:inherit">
+          <textarea id="msg" placeholder="Tell us your travel idea (dates, travellers)" rows="4" style="padding:10px; border-radius:8px; background:transparent; border:1px solid rgba(255,255,255,0.04); color:inherit"></textarea>
+          <div style="display:flex; gap:8px; align-items:center">
+            <button type="submit" class="btn" style="background:var(--accent); color:#072032">Send Request</button>
+            <div class="small" style="color:var(--muted)">We'll respond within 48 hrs</div>
+          </div>
+        </form>
+        <div id="formMsg" style="margin-top:8px; color:var(--muted); font-size:14px"></div>
+      `;
+      document.querySelector('.wrap').appendChild(formCard);
+
+      document.getElementById('contactForm').addEventListener('submit', function(e){
+        e.preventDefault();
+        document.getElementById('formMsg').textContent = 'Thanks! Your request has been received (demo).';
+        this.reset();
+      });
+    })();
+
+    // Note: The Download link above points to the local uploaded PDF path:
+    // "/mnt/data/report.pdf"
+    // If that file is hosted, the link will download it. If you need a different file path
+    // from your workspace (for example the system architecture image), tell me and I'll update it.
+  </script>
+</body>
+</html>
